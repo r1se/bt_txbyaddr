@@ -1,12 +1,12 @@
 package main
 
 import (
-	"net/http"
-	"testing"
-	"net/http/httptest"
-	"strings"
-	"net/http/httputil"
 	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
+	"net/http/httputil"
+	"strings"
+	"testing"
 )
 
 func Benchmark_commHandler(b *testing.B) {
@@ -19,16 +19,14 @@ func Benchmark_commHandler(b *testing.B) {
 
 	b.ReportAllocs()
 	w := httptest.NewRecorder()
-	r := 	httptest.NewRequest("POST",
-			"http://localhost/gettransactions",
-			strings.NewReader("1NDyJtNTjmwk5xPNhjgAMu4HDHigtobu1s"))
+	r := httptest.NewRequest("POST",
+		"http://localhost/gettransactions",
+		strings.NewReader("1NDyJtNTjmwk5xPNhjgAMu4HDHigtobu1s"))
 
 	for i := 0; i < b.N; i++ {
 		commHandler(w, r)
 	}
 }
-
-
 
 func Test_commHandler(t *testing.T) {
 
@@ -43,8 +41,8 @@ func Test_commHandler(t *testing.T) {
 		r *http.Request
 	}
 	tests := []struct {
-		name string
-		args args
+		name    string
+		args    args
 		wantErr bool
 	}{
 		{
@@ -57,7 +55,6 @@ func Test_commHandler(t *testing.T) {
 			},
 			false,
 		},
-
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

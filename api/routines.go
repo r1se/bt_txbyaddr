@@ -141,21 +141,20 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer stmt.Close()
 
-	rtrow,err:= db.Query("SELECT * FROM transact WHERE addr='"+string(data)+"';")
+	rtrow, err := db.Query("SELECT * FROM transact WHERE addr='" + string(data) + "';")
 	if err != nil {
 		http.Error(w, "query error. "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	tmpme:=[]answer{}
+	tmpme := []answer{}
 
 	for rtrow.Next() {
 		tmp := answer{}
-		rtrow.Scan(&tmp.Txhash, &tmp.Addr,  &tmp.Raw,  &tmp.Block,  &tmp.Blockhash,  &tmp.Blockheight,  &tmp.Blocktime, )
+		rtrow.Scan(&tmp.Txhash, &tmp.Addr, &tmp.Raw, &tmp.Block, &tmp.Blockhash, &tmp.Blockheight, &tmp.Blocktime)
 		tmpme = append(tmpme, tmp)
 	}
 	rtrow.Close()
-
 
 	answer, err := json.Marshal(tmpme)
 	if err != nil {

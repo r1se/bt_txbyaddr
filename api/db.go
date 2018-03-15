@@ -41,9 +41,6 @@ func NewDB(host, port, user, pass, dbname string) *sql.DB {
 		panic(err)
 	}
 
-
-
-
 	return db
 }
 
@@ -109,7 +106,6 @@ func InsertTransactions(db *sql.DB, txs []toDB) error {
 				}
 			}
 		}
-
 
 	}
 	return err

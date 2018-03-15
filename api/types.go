@@ -1,13 +1,13 @@
 package main
 
-type answer struct{
-	Txhash string `json:"Txhash"`
-	Addr string `json:"Addr"`
-	Raw string `json:"Raw"`
-	Block string `json:"Block"`
-	Blockhash string `json:"Blockhash"`
+type answer struct {
+	Txhash      string `json:"Txhash"`
+	Addr        string `json:"Addr"`
+	Raw         string `json:"Raw"`
+	Block       string `json:"Block"`
+	Blockhash   string `json:"Blockhash"`
 	Blockheight string `json:"Blockheight"`
-	Blocktime string `json:"Blocktime"`
+	Blocktime   string `json:"Blocktime"`
 }
 
 type toDB struct {

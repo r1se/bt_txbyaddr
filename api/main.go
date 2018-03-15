@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 	"sync"
+	"time"
 )
 
 var mapmutex *sync.Mutex
