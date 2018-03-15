@@ -5,6 +5,7 @@
 go get github.com/lib/pq
 go build
 go run
+Или docker-compose up. 
 
 Настройки переменных в config.json.
 Рутина GetEvents запрашивает последние блоки, если появился новый, она говорит рутине BlockDetail о необходимости получит его.
