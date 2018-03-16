@@ -11,14 +11,14 @@ import (
 	"time"
 )
 
-var myTime int
-var mapmutex *sync.Mutex
-var accounts map[string][]string
-var db *sql.DB
-
 var (
 	httpClient    *http.Client
 	lasthashblock string
+	myTime int
+	mapmutex *sync.Mutex
+	accounts map[string][]string
+	db *sql.DB
+	myTimer int
 )
 
 const (

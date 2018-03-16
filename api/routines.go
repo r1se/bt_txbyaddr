@@ -19,7 +19,8 @@ func GetEvents(blockIdChan chan<- string) {
 	if err != nil {
 		panic(err)
 	}
-	timer := time.NewTimer(time.Second * time.Duration(i))
+	myTimer = i
+	timer := time.NewTimer(time.Second * 1)
 	for {
 		select {
 		case <-timer.C:
@@ -65,6 +66,7 @@ func GetEvents(blockIdChan chan<- string) {
 				lasthashblock = latestblock.Hash
 				blockIdChan <- latestblock.Hash
 			}
+			timer.Reset(time.Second * time.Duration(i))
 		}
 	}
 }
@@ -129,7 +131,7 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	
+
 	if ok, _ := ValidA58(data);!ok {
 	http.Error(w, "Invalid address "+string(data), http.StatusBadRequest)
 	return
