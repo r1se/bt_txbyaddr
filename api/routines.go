@@ -55,7 +55,6 @@ func GetEvents(blockIdChan chan<- string) {
 				TxIndexes  []int  `json:"txIndexes"`
 			}{}
 
-
 			err = json.Unmarshal(bodyBytes, &latestblock)
 			if err != nil {
 				log.Printf("Unmarshal request blockchain error " + err.Error())

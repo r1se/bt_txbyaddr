@@ -14,7 +14,7 @@ func NewDB(host, port, user, pass, dbname, ssl string) *sql.DB {
 		port,
 		user,
 		pass,
-			ssl,
+		ssl,
 	))
 	if err != nil {
 		panic(err)
@@ -56,7 +56,7 @@ func InsertAddress(db *sql.DB, txhash string, blockhash string, inout ...interfa
 	}
 	defer stmt.Close()
 
-	for _, interf:= range inout {
+	for _, interf := range inout {
 		if t, ok := interf.([]*Inputs); ok {
 			for _, input := range t {
 				if input.PrevOut != nil {
@@ -77,7 +77,7 @@ func InsertAddress(db *sql.DB, txhash string, blockhash string, inout ...interfa
 		if t, ok := interf.([]*Out); ok {
 			for _, out := range t {
 				if out.Addr != "" {
-					stmt.Exec(out.Addr , blockhash, myTime)
+					stmt.Exec(out.Addr, blockhash, myTime)
 					if err != nil {
 						log.Println("stmt err %v \n", err)
 						return err
@@ -103,7 +103,7 @@ func InsertTransactions(db *sql.DB, txs []toDB) error {
 	defer stmt.Close()
 
 	for _, tz := range txs {
-		for _,addr:= range accounts[tz.Tx.Hash]{
+		for _, addr := range accounts[tz.Tx.Hash] {
 			res, err := stmt.Exec(addr,
 				tz.Tx.Hash,
 				fmt.Sprintf("%v", *tz.Tx),
