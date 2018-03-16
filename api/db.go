@@ -62,10 +62,6 @@ func InsertAddress(db *sql.DB, txhash string, blockhash string, inout ...interfa
 				if input.PrevOut != nil {
 					if input.PrevOut.Addr != "" {
 						stmt.Exec(input.PrevOut.Addr, blockhash, myTime)
-						if err != nil {
-							log.Println("stmt err %v \n", err)
-							return err
-						}
 						mapmutex.Lock()
 						accounts[txhash] = append(accounts[txhash], input.PrevOut.Addr)
 						mapmutex.Unlock()
@@ -78,10 +74,6 @@ func InsertAddress(db *sql.DB, txhash string, blockhash string, inout ...interfa
 			for _, out := range t {
 				if out.Addr != "" {
 					stmt.Exec(out.Addr, blockhash, myTime)
-					if err != nil {
-						log.Println("stmt err %v \n", err)
-						return err
-					}
 					mapmutex.Lock()
 					accounts[txhash] = append(accounts[txhash], out.Addr)
 					mapmutex.Unlock()
