@@ -129,15 +129,10 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	switch ok, err := ValidA58(data); {
-	case ok:
-		break
-	case err == nil:
-		http.Error(w, "Invalid address "+string(data), http.StatusBadRequest)
-		return
-	default:
-		http.Error(w, "Default exception", http.StatusBadRequest)
-		return
+	
+	if ok, _ := ValidA58(data);!ok {
+	http.Error(w, "Invalid address "+string(data), http.StatusBadRequest)
+	return
 	}
 	//SELECT * FROM transact WHERE addr = '1NDyJtNTjmwk5xPNhjgAMu4HDHigtobu1s';
 	stmt, err := db.Prepare(`SELECT * FROM transact WHERE addr=$1`)
