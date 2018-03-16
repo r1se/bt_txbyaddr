@@ -76,7 +76,7 @@ func BlockDetail(blockIdChan <-chan string, TsChan chan<- []toDB) {
 	for {
 		select {
 		case blockIds := <-blockIdChan:
-
+REQ:
 			req, err := http.NewRequest("GET", "https://blockchain.info/ru/rawblock/"+blockIds, nil)
 			if err != nil {
 				log.Printf("Чтение request " + err.Error())
@@ -104,7 +104,7 @@ func BlockDetail(blockIdChan <-chan string, TsChan chan<- []toDB) {
 			err = json.Unmarshal(bodyBytes, &infoBlock)
 			if err != nil {
 				log.Printf("error unmarshall " + err.Error())
-				return
+				goto REQ
 			}
 
 			sliceTrans := []toDB{}
