@@ -76,7 +76,8 @@ func main() {
 		Config.Database.Port,
 		Config.Database.Username,
 		Config.Database.Password,
-		Config.Database.DatabaseName)
+		Config.Database.DatabaseName,
+			Config.Database.Ssl)
 
 	//Get event from filter routine and channels
 	//blockid - get block and send to BlockDetail

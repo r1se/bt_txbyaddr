@@ -3,21 +3,20 @@ services:
   db:
     build: ./db
     volumes:
-      - ./db/pgdata:/pgdata
+      - './db/pgdata:/pgdata'
     ports:
-      - "5432"
+      - '5432'
     environment:
       - POSTGRES_USER=docker
       - POSTGRES_PASSWORD=docker
       - POSTGRES_DB=docker
       - PGDATA=/pgdata
-
   api:
     build:
       context: ./api
     volumes:
-      - ./api:/go/src/bt_txbyaddr
+      - './api:/go/src/bt_txbyaddr'
     ports:
-      - "5000:8080"
+      - '5000:8080'
     links:
       - db

@@ -63,6 +63,7 @@ func GetEvents(blockIdChan chan<- string) {
 			}
 			myTime = latestblock.Time
 			if lasthashblock != latestblock.Hash {
+				lasthashblock = latestblock.Hash
 				blockIdChan <- latestblock.Hash
 			}
 		}

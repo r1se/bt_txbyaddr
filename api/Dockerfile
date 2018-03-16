@@ -8,6 +8,7 @@ WORKDIR /go/src/bt_txbyaddr
 
 RUN go get github.com/lib/pq
 
+RUN go get ./
 RUN go build
-	
+CMD ["bt_txbyaddr"]
 EXPOSE 8080

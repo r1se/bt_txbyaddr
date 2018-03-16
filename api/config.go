@@ -16,6 +16,7 @@ type config struct {
 		Username     string `json:"username"`
 		Password     string `json:"password"`
 		DatabaseName string `json:"database_name"`
+		Ssl 		string `json:"ssl"`
 	} `json:"database"`
 	Checklastblocktimeout string `json:"checklastblocktimeout"`
 }

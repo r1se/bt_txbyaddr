@@ -1,11 +1,12 @@
 {
   "port": "8080",
   "database": {
-    "host": "127.0.0.1",
+    "host": "db",
     "port": "5432",
-    "username": "postgres",
-    "password": "",
-    "database_name": "postgres"
+    "username": "docker",
+    "password": "docker",
+    "database_name": "docker",
+    "ssl": "disable"
   },
-  "checklastblocktimeout": "1"
+  "checklastblocktimeout": "5"
 }

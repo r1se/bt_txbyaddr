@@ -7,13 +7,14 @@ import (
 	"log"
 )
 
-func NewDB(host, port, user, pass, dbname string) *sql.DB {
+func NewDB(host, port, user, pass, dbname, ssl string) *sql.DB {
 
-	db, err := sql.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s password=%s ",
+	db, err := sql.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s password=%s sslmode=%s",
 		host,
 		port,
 		user,
 		pass,
+			ssl,
 	))
 	if err != nil {
 		panic(err)
