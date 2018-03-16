@@ -11,6 +11,10 @@ import (
 
 func GetEvents(blockIdChan chan<- string) {
 
+	var tmp string
+	rtrow := db.QueryRow("SELECT DISTINCT latestblock, time FROM address ORDER BY time desc;")
+	rtrow.Scan(&lasthashblock, &tmp)
+
 	i, err := strconv.Atoi(Config.Checklastblocktimeout)
 	if err != nil {
 		panic(err)
@@ -51,11 +55,13 @@ func GetEvents(blockIdChan chan<- string) {
 				TxIndexes  []int  `json:"txIndexes"`
 			}{}
 
+
 			err = json.Unmarshal(bodyBytes, &latestblock)
 			if err != nil {
 				log.Printf("Unmarshal request blockchain error " + err.Error())
 				return
 			}
+			myTime = latestblock.Time
 			if lasthashblock != latestblock.Hash {
 				blockIdChan <- latestblock.Hash
 			}
@@ -101,13 +107,12 @@ func BlockDetail(blockIdChan <-chan string, TsChan chan<- []toDB) {
 
 			sliceTrans := []toDB{}
 			for _, tx := range infoBlock.Tx {
+
+				InsertAddress(db, tx.Hash, blockIds, tx.Inputs, tx.Out)
+
 				tmp := infoBlock
 				tmp.Tx = nil
 				tmp.TxIndexes = nil
-
-				InsertAddress(db, tx.Hash, tx.Inputs)
-				InsertAddress(db, tx.Hash, tx.Out)
-
 				sliceTrans = append(sliceTrans, toDB{&tmp, tx})
 			}
 

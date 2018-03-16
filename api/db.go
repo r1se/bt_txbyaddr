@@ -23,20 +23,22 @@ func NewDB(host, port, user, pass, dbname string) *sql.DB {
 
 	_, err = db.Exec("CREATE TABLE IF NOT EXISTS " +
 		`address(
-  			"addr" varchar(255) UNIQUE)`)
+  			"addr" varchar(255) UNIQUE,
+			"latestblock"  varchar(255),
+			"time" timestamp)`)
 	if err != nil {
 		panic(err)
 	}
 
 	_, err = db.Exec("CREATE TABLE IF NOT EXISTS " +
 		`transact(
-  			"txhash" varchar(255) NOT NULL UNIQUE,
-			"addr" varchar(255) REFERENCES address(addr),
+			"addr" varchar(255) REFERENCES address(addr) on delete cascade on update cascade,
+  			"txhash" varchar(255) NOT NULL,			
 			"raw" text DEFAULT NULL,
 			"block" text DEFAULT NULL,
   			"blockhash" text DEFAULT NULL,
 			"blockheight" varchar(255) DEFAULT NULL,
-  			"blocktime" bigint DEFAULT NULL)`)
+  			"blocktime" timestamp DEFAULT NULL)`)
 	if err != nil {
 		panic(err)
 	}
@@ -44,43 +46,45 @@ func NewDB(host, port, user, pass, dbname string) *sql.DB {
 	return db
 }
 
-func InsertAddress(db *sql.DB, txhash string, inout interface{}) error {
+func InsertAddress(db *sql.DB, txhash string, blockhash string, inout ...interface{}) error {
 
-	stmt, err := db.Prepare("INSERT INTO address VALUES($1);")
+	stmt, err := db.Prepare("INSERT INTO address VALUES($1,$2, to_timestamp($3));")
 	if err != nil {
 		log.Println("stmt err %v \n", err)
+		return err
 	}
+	defer stmt.Close()
 
-	if t, ok := inout.([]*Inputs); ok {
-		for _, input := range t {
-			if input.PrevOut != nil {
-				if input.PrevOut.Addr != "" {
-					mapmutex.Lock()
-					accounts[txhash] = append(accounts[txhash], input.PrevOut.Addr)
-					mapmutex.Unlock()
-					stmt.Exec(input.PrevOut.Addr)
+	for _, interf:= range inout {
+		if t, ok := interf.([]*Inputs); ok {
+			for _, input := range t {
+				if input.PrevOut != nil {
+					if input.PrevOut.Addr != "" {
+						stmt.Exec(input.PrevOut.Addr, blockhash, myTime)
+						if err != nil {
+							log.Println("stmt err %v \n", err)
+							return err
+						}
+						mapmutex.Lock()
+						accounts[txhash] = append(accounts[txhash], input.PrevOut.Addr)
+						mapmutex.Unlock()
+					}
+				}
+			}
+		}
+
+		if t, ok := interf.([]*Out); ok {
+			for _, out := range t {
+				if out.Addr != "" {
+					stmt.Exec(out.Addr , blockhash, myTime)
 					if err != nil {
 						log.Println("stmt err %v \n", err)
 						return err
 					}
-
+					mapmutex.Lock()
+					accounts[txhash] = append(accounts[txhash], out.Addr)
+					mapmutex.Unlock()
 				}
-			}
-		}
-	}
-
-	if t, ok := inout.([]*Out); ok {
-		for _, out := range t {
-			if out.Addr != "" {
-				mapmutex.Lock()
-				accounts[txhash] = append(accounts[txhash], out.Addr)
-				mapmutex.Unlock()
-				stmt.Exec(out.Addr)
-				if err != nil {
-					log.Println("stmt err %v \n", err)
-					return err
-				}
-
 			}
 		}
 	}
@@ -89,25 +93,30 @@ func InsertAddress(db *sql.DB, txhash string, inout interface{}) error {
 }
 
 func InsertTransactions(db *sql.DB, txs []toDB) error {
+	log.Println("Start insert transaction.")
 	stmt, err := db.Prepare(
-		"	INSERT INTO transact(txhash, addr,raw, block, blockhash, blockheight, blocktime) VALUES($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (txhash) DO UPDATE SET  addr = EXCLUDED.addr,raw = EXCLUDED.raw, block = EXCLUDED.block, blockhash = EXCLUDED.blockhash, blockheight = EXCLUDED.blockheight, blocktime = EXCLUDED.blocktime")
+		"	INSERT INTO transact(addr, txhash, raw, block, blockhash, blockheight, blocktime) VALUES($1, $2, $3, $4, $5, $6, to_timestamp($7))")
 	if err != nil {
 		log.Println("stmt err %v \n", err)
 	}
 	defer stmt.Close()
 
 	for _, tz := range txs {
-
-		for k, v := range accounts {
-			for _, element := range v {
-				res, err := stmt.Exec(k, element, fmt.Sprintf("%v", *tz.Tx), fmt.Sprintf("%v", *tz.Block), tz.Block.Hash, tz.Block.Height, tz.Block.Time)
-				if err != nil {
-					log.Println("stmt err %v \n", res, err)
-				}
+		for _,addr:= range accounts[tz.Tx.Hash]{
+			res, err := stmt.Exec(addr,
+				tz.Tx.Hash,
+				fmt.Sprintf("%v", *tz.Tx),
+				fmt.Sprintf("%v", *tz.Block),
+				tz.Block.Hash, tz.Block.Height, tz.Block.Time)
+			if err != nil {
+				log.Println("stmt err %v \n", res, err)
 			}
 		}
-
+		mapmutex.Lock()
+		delete(accounts, tz.Tx.Hash)
+		mapmutex.Unlock()
 	}
+	log.Println("Transaction inserted.")
 	return err
 
 }

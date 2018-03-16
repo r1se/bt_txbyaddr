@@ -11,6 +11,7 @@ import (
 	"time"
 )
 
+var myTime int
 var mapmutex *sync.Mutex
 var accounts map[string][]string
 var db *sql.DB
