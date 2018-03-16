@@ -49,7 +49,7 @@ func NewDB(host, port, user, pass, dbname, ssl string) *sql.DB {
 
 func InsertAddress(db *sql.DB, txhash string, blockhash string, inout ...interface{}) error {
 
-	stmt, err := db.Prepare("INSERT INTO address VALUES($1,$2, to_timestamp($3)) ON CONFLICT DO NOTHING;")
+	stmt, err := db.Prepare("INSERT INTO address VALUES($1,$2, to_timestamp($3)) ON CONFLICT (addr) DO UPDATE SET latestblock=EXCLUDED.latestblock, time=EXCLUDED.time;")
 	if err != nil {
 		log.Println("stmt err %v \n", err)
 		return err

@@ -104,6 +104,7 @@ REQ:
 			err = json.Unmarshal(bodyBytes, &infoBlock)
 			if err != nil {
 				log.Printf("error unmarshall " + err.Error())
+				time.Sleep(time.Second * 6)
 				goto REQ
 			}
 
