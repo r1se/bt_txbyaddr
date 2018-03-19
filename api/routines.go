@@ -138,6 +138,9 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "cant make slice from body "+err.Error(), http.StatusBadRequest)
 		return
 	}
+	if len(data)==0{
+		data = []byte(r.URL.Query().Get("address"))
+	}
 
 
 	if ok, _ := ValidA58(data);!ok {
