@@ -24,17 +24,19 @@ func GetEvents(blockIdChan chan<- string) {
 	for {
 		select {
 		case <-timer.C:
-
+REQ:
 			req, err := http.NewRequest("GET", "https://blockchain.info/ru/latestblock", nil)
 			if err != nil {
-				log.Printf("Чтение request " + err.Error())
-				return
+				log.Printf("error unmarshall " + err.Error())
+				time.Sleep(time.Second * 6)
+				goto REQ
 			}
 
 			resp, err := httpClient.Do(req)
 			if err != nil {
-				log.Printf("Ошибка при обращении к REST " + err.Error())
-				return
+				log.Printf("error unmarshall " + err.Error())
+				time.Sleep(time.Second * 6)
+				goto REQ
 			}
 			defer resp.Body.Close()
 			if resp.StatusCode != 200 {
@@ -44,8 +46,9 @@ func GetEvents(blockIdChan chan<- string) {
 
 			bodyBytes, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
-				log.Printf("Чтение тела " + err.Error())
-				return
+				log.Printf("error unmarshall " + err.Error())
+				time.Sleep(time.Second * 6)
+				goto REQ
 			}
 
 			latestblock := struct {
@@ -58,8 +61,9 @@ func GetEvents(blockIdChan chan<- string) {
 
 			err = json.Unmarshal(bodyBytes, &latestblock)
 			if err != nil {
-				log.Printf("Unmarshal request blockchain error " + err.Error())
-				return
+				log.Printf("error unmarshall " + err.Error())
+				time.Sleep(time.Second * 6)
+				goto REQ
 			}
 			myTime = latestblock.Time
 			if lasthashblock != latestblock.Hash {
@@ -79,13 +83,15 @@ func BlockDetail(blockIdChan <-chan string, TsChan chan<- []toDB) {
 REQ:
 			req, err := http.NewRequest("GET", "https://blockchain.info/ru/rawblock/"+blockIds, nil)
 			if err != nil {
-				log.Printf("Чтение request " + err.Error())
-				return
+				log.Printf("error unmarshall " + err.Error())
+				time.Sleep(time.Second * 6)
+				goto REQ
 			}
 			resp, err := httpClient.Do(req)
 			if err != nil {
-				log.Printf("Ошибка при обращении к REST " + err.Error())
-				return
+				log.Printf("error unmarshall " + err.Error())
+				time.Sleep(time.Second * 6)
+				goto REQ
 			}
 			defer resp.Body.Close()
 
@@ -96,8 +102,9 @@ REQ:
 
 			bodyBytes, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
-				log.Printf("error body read " + err.Error())
-				return
+				log.Printf("error unmarshall " + err.Error())
+				time.Sleep(time.Second * 6)
+				goto REQ
 			}
 
 			infoBlock := Block{}
