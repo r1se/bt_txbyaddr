@@ -165,7 +165,7 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 
 	for rtrow.Next() {
 		tmp := answer{}
-		rtrow.Scan(&tmp.Txhash, &tmp.Addr, &tmp.Raw, &tmp.Block, &tmp.Blockhash, &tmp.Blockheight, &tmp.Blocktime)
+		rtrow.Scan(&tmp.Addr, &tmp.Txhash, &tmp.Raw, &tmp.Block, &tmp.Blockhash, &tmp.Blockheight, &tmp.Blocktime)
 		tmpme = append(tmpme, tmp)
 	}
 	rtrow.Close()
