@@ -1,8 +1,8 @@
 package main
 
 type answer struct {
-	Addr      string `json:"Addr"`
-	Txhash        string `json:"Txhash"`
+	Txhash      string `json:"Txhash"`
+	Addr        string `json:"Addr"`
 	Raw         string `json:"Raw"`
 	Block       string `json:"Block"`
 	Blockhash   string `json:"Blockhash"`
